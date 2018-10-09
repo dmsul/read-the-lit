@@ -1,5 +1,4 @@
 from typing import Union
-from dataclasses import dataclass
 from datetime import date as make_date, datetime
 
 from config import YEAR0
@@ -21,13 +20,14 @@ def extrap_issues(name: str, months: list, weight: int, website: str) -> list:
     return issues
 
 
-@dataclass(repr=False)
 class Issue(object):
 
-    name: str
-    date: make_date
-    weight: int
-    website: str
+    def __init__(self, name: str, date: make_date, weight: int,
+                 website: str) -> None:
+        self.name = name
+        self.date = date
+        self.weight = weight
+        self.website = website
 
     def __repr__(self) -> str:
         return '{} {}'.format(self.name, self.date.strftime('%Y %b'))
