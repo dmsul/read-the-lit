@@ -54,7 +54,7 @@ month_nums = dict(zip(months, nums))
 inv_mn = {nums: months for months, nums in month_nums.items()}
 
 
-def get_volume(input_y, journal_name):
+def get_volume(input_y, journal_name, input_m=None):
     if journal_name in journal_yr_v:
         base_y, base_v = journal_yr_v[journal_name]
         start_y = base_y - base_v + 1
@@ -66,7 +66,7 @@ def get_volume(input_y, journal_name):
     else:
         base_y, base_m, base_v, ann_rate = journal_yr_mo_v_rate[journal_name]
         month_gap = 12 // ann_rate
-        input_m = month_nums[input("Enter month (first 3 letters): ").lower()]
+        input_m = month_nums[input_m.lower()]
         if (base_m - input_m) % month_gap != 0:
             start_m = base_m - (base_m//month_gap) * month_gap
             if start_m == 0:
