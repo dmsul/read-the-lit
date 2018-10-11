@@ -89,7 +89,7 @@ class ReadingList(object):
         except FileNotFoundError:
             pass
 
-        record = record.fillna(False)
+        record = record.fillna(False).astype(bool)
         self.record = record
         self.update_record()
 
