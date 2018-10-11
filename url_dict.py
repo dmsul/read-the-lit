@@ -51,10 +51,10 @@ months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct',
           'nov', 'dec']
 nums = list(range(1, 13))
 month_nums = dict(zip(months, nums))
-inv_month_nums = {nums: months for months, nums in month_nums.items()}
+inv_mn = {nums: months for months, nums in month_nums.items()}
 
 
-def get_volume(input_y, journal_name):
+def get_volume(input_y, journal_name, input_m=None):
     if journal_name in journal_yr_v:
         base_y, base_v = journal_yr_v[journal_name]
         start_y = base_y - base_v + 1
@@ -66,10 +66,13 @@ def get_volume(input_y, journal_name):
     else:
         base_y, base_m, base_v, ann_rate = journal_yr_mo_v_rate[journal_name]
         month_gap = 12 // ann_rate
-        input_m = month_nums[input("Enter month (first 3 letters): ").lower()]
+        input_m = month_nums[input_m.lower()]
         if (base_m - input_m) % month_gap != 0:
-            to_print = [inv_month_nums[key] for key in range(1, 13, month_gap)]
-            raise ValueError(f"Publishing months are: {to_print}")
+            start_m = base_m - (base_m//month_gap) * month_gap
+            if start_m == 0:
+                start_m = month_gap
+            pub_months = [inv_mn[key] for key in range(start_m, 13, month_gap)]
+            raise ValueError(f"Publishing months are: {pub_months}")
         offset = (base_m - input_m) / month_gap
         offset += (base_y - input_y) * ann_rate
         vol_num = int(base_v - offset)
