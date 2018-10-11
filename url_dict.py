@@ -68,8 +68,11 @@ def get_volume(input_y, journal_name):
         month_gap = 12 // ann_rate
         input_m = month_nums[input("Enter month (first 3 letters): ").lower()]
         if (base_m - input_m) % month_gap != 0:
-            to_print = [inv_month_nums[key] for key in range(1, 13, month_gap)]
-            raise ValueError(f"Publishing months are: {to_print}")
+            start_m = base_m - (base_m//month_gap) * month_gap
+            if start_m == 0:
+                start_m += month_gap
+            pm = [inv_month_nums[key] for key in range(start_m, 13, month_gap)]
+            raise ValueError(f"Publishing months are: {pm}")
         offset = (base_m - input_m) / month_gap
         offset += (base_y - input_y) * ann_rate
         vol_num = int(base_v - offset)
