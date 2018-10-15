@@ -1,7 +1,6 @@
 import pytest
 
-from url_dict import (journal_issue_url, journal_yr_v, journal_yr_mo_v_rate,
-                      month_nums, inv_mn, get_volume)
+from url_dict import get_volume
 
 
 def test_get_volume_normal():
