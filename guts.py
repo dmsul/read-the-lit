@@ -5,6 +5,14 @@ import pandas as pd
 
 from config import YEAR0, months
 
+def publication_months(journal_name):
+    df = publication_info()
+    df = df.set_index('name')
+    journal_schedule = df.loc[journal_name, months]
+    journal_months = journal_schedule[journal_schedule].index.tolist()
+
+    return journal_months
+
 
 def publication_info():
     df = pd.read_csv('journal_schedule.csv')
