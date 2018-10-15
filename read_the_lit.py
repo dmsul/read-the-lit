@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 
 from config import months
-from guts import extrap_issues, Issue
+from guts import extrap_issues, Issue, publication_info
 
 
 def main():
@@ -53,9 +53,7 @@ class ReadingList(object):
 
     def __init__(self, cli_args):
         self.record_path = 'reading_record.csv'
-        df = pd.read_csv('journal_schedule.csv')
-        for month in months:
-            df[month] = df[month].fillna(0).replace('X', 1).astype(bool)
+        df = publication_info()
         js = [
             extrap_issues(row['name'], row[months], row['wt'], row['Website'])
             for idx, row in df.iterrows()

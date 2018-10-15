@@ -1,7 +1,17 @@
 from typing import Union
 from datetime import date as make_date, datetime
 
-from config import YEAR0
+import pandas as pd
+
+from config import YEAR0, months
+
+
+def publication_info():
+    df = pd.read_csv('journal_schedule.csv')
+    for month in months:
+        df[month] = df[month].fillna(0).replace('X', 1).astype(bool)
+
+    return df
 
 
 def extrap_issues(name: str, months: list, weight: int, website: str) -> list:
