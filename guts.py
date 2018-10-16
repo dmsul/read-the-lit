@@ -5,7 +5,7 @@ from itertools import chain
 import pandas as pd
 
 from config import YEAR0, months, publication_info
-from url_dict import get_url
+from get_url import get_url
 
 
 def extrap_issues(name: str, months: list, weight: int, website: str) -> list:
