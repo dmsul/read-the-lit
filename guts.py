@@ -5,6 +5,7 @@ from itertools import chain
 import pandas as pd
 
 from config import YEAR0, months, publication_info
+from url_dict import get_url
 
 
 def extrap_issues(name: str, months: list, weight: int, website: str) -> list:
@@ -30,7 +31,8 @@ class Issue(object):
         self.name = name
         self.date = date
         self.weight = weight
-        self.website = website
+        self.journal_website = website
+        self._website = ''
 
     def __repr__(self) -> str:
         return '{} {}'.format(self.name, self.date.strftime('%Y %b'))
@@ -47,6 +49,20 @@ class Issue(object):
 
     def __geq__(self, other):
         return self - other >= 0
+
+    @property
+    def website(self) -> str:
+        if self._website:
+            return self._website
+        else:
+            try:
+                issues_url = get_url(self.name, self.date.year,
+                                     self.date.month)
+                self._website = issues_url
+            except ValueError:
+                self._website = self.journal_website
+
+        return self._website
 
 
 class ReadingList(object):
