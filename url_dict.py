@@ -50,8 +50,9 @@ journal_yr_mo_vol = {
 }
 
 
-def get_url(journal_name, input_y, input_m):
-    pub_months = publication_months(journal_name)
+def get_url(journal_name: str, input_y: int, input_m: int) -> str:
+    pub_months_str = publication_months(journal_name)
+    pub_months = [months.index(x) + 1 for x in pub_months_str]
     journal_name = journal_name.lower()
 
     if journal_name in journal_yr_vol:
@@ -59,28 +60,29 @@ def get_url(journal_name, input_y, input_m):
         start_y = base_y - base_v + 1
         if input_y < start_y:
             raise ValueError(f"You entered a year before {start_y}")
-
         offset = base_y - input_y
         vol_num = base_v - offset
-        if input_m not in pub_months:
-            raise ValueError(f"Publishing months are: {pub_months}.")
 
+        if input_m not in pub_months:
+            raise ValueError(f"Publishing months are: {pub_months_str}.")
         issue_num = pub_months.index(input_m) + 1
+
         url = journal_url[journal_name]
         return url.format(vol=vol_num, iss=issue_num, yr=input_y)
 
-    else:
+    elif journal_name in journal_yr_mo_vol:
         base_y, base_m, base_v = journal_yr_mo_vol[journal_name]
 
         month_gap = 12 // len(pub_months)
         if input_m not in pub_months:
             raise ValueError(f"Publishing months are: {pub_months}")
-        input_m = months.index(input_m) + 1
-        base_m = months.index(base_m) + 1
-
-        offset = (base_m - input_m) / month_gap
+        base_mo_int = months.index(base_m) + 1
+        offset = (base_mo_int - input_m) / month_gap
         offset += (base_y - input_y) * len(pub_months)
         vol_num = int(base_v - offset)
+
         url = journal_url[journal_name]
 
         return url.format(vol=vol_num, iss=0)
+    else:
+        raise ValueError(f"Invalid journal {journal_name}")
