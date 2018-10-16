@@ -1,4 +1,6 @@
-journal_issue_url = {
+from config import months, publication_months
+
+journal_url = {
     'qje': 'https://academic.oup.com/qje/issue/{vol}/{iss}',
     'restud': 'https://academic.oup.com/restud/issue/{vol}/{iss}',
     'restat': 'https://www.mitpressjournals.org/toc/rest/{vol}/{iss}',
@@ -24,7 +26,7 @@ journal_issue_url = {
     'jbes': 'https://amstat.tandfonline.com/toc/ubes20/{vol}/{iss}?nav=tocList'
 }
 
-journal_yr_v = {
+journal_yr_vol = {
     'qje': (2018, 133),
     'restud': (2018, 85),
     'restat': (2018, 100),
@@ -38,42 +40,47 @@ journal_yr_v = {
     'jbes': (2018, 36)
 }
 
-journal_yr_mo_v_rate = {
-    'jeem': (2018, 11, 92, 6),
-    'jpube': (2018, 11, 167, 12),
-    'jue': (2018, 11, 108, 6),
-    'energy policy': (2018, 12, 123, 12),
-    'ecletters': (2018, 12, 173, 12),
-    'joe': (2018, 11, 207, 6)
+journal_yr_mo_vol = {
+    'jeem': (2018, 'Nov', 92),
+    'jpube': (2018, 'Nov', 167),
+    'jue': (2018, 'Nov', 108),
+    'energy policy': (2018, 'Dec', 123),
+    'ecletters': (2018, 'Dec', 173),
+    'joe': (2018, 'Nov', 207)
 }
 
-months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct',
-          'nov', 'dec']
-nums = list(range(1, 13))
-month_nums = dict(zip(months, nums))
-inv_mn = {nums: months for months, nums in month_nums.items()}
 
+def get_url(journal_name, input_y, input_m):
+    pub_months = publication_months(journal_name)
+    journal_name = journal_name.lower()
 
-def get_volume(input_y, journal_name, input_m=None):
-    if journal_name in journal_yr_v:
-        base_y, base_v = journal_yr_v[journal_name]
+    if journal_name in journal_yr_vol:
+        base_y, base_v = journal_yr_vol[journal_name]
         start_y = base_y - base_v + 1
         if input_y < start_y:
-            raise ValueError(f" You entered a year before {start_y}")
+            raise ValueError(f"You entered a year before {start_y}")
+
         offset = base_y - input_y
         vol_num = base_v - offset
-        return vol_num
+        if input_m not in pub_months:
+            raise ValueError(f"Publishing months are: {pub_months}.")
+
+        issue_num = pub_months.index(input_m) + 1
+        url = journal_url[journal_name]
+        return url.format(vol=vol_num, iss=issue_num, yr=input_y)
+
     else:
-        base_y, base_m, base_v, ann_rate = journal_yr_mo_v_rate[journal_name]
-        month_gap = 12 // ann_rate
-        input_m = month_nums[input_m.lower()]
-        if (base_m - input_m) % month_gap != 0:
-            start_m = base_m - (base_m//month_gap) * month_gap
-            if start_m == 0:
-                start_m = month_gap
-            pub_months = [inv_mn[key] for key in range(start_m, 13, month_gap)]
+        base_y, base_m, base_v = journal_yr_mo_vol[journal_name]
+
+        month_gap = 12 // len(pub_months)
+        if input_m not in pub_months:
             raise ValueError(f"Publishing months are: {pub_months}")
+        input_m = months.index(input_m) + 1
+        base_m = months.index(base_m) + 1
+
         offset = (base_m - input_m) / month_gap
-        offset += (base_y - input_y) * ann_rate
+        offset += (base_y - input_y) * len(pub_months)
         vol_num = int(base_v - offset)
-        return vol_num
+        url = journal_url[journal_name]
+
+        return url.format(vol=vol_num, iss=0)
