@@ -5,13 +5,17 @@ months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
 YEAR0 = 2015
 
 
-def publication_months(journal_name):
-    df = publication_info()
-    df = df.set_index('name')
-    journal_schedule = df.loc[journal_name, months]
-    journal_months = journal_schedule[journal_schedule].index.tolist()
+class PublicationInfo(object):
 
-    return journal_months
+    def __init__(self):
+        self.pub_info = publication_info()
+
+    def pub_months(self, journal_name: str) -> list:
+        df = self.pub_info.set_index('name')
+        journal_schedule = df.loc[journal_name, months]
+        journal_months = journal_schedule[journal_schedule].index.tolist()
+
+        return journal_months
 
 
 def publication_info():
@@ -20,3 +24,10 @@ def publication_info():
         df[month] = df[month].fillna(0).replace('X', 1).astype(bool)
 
     return df
+
+
+pub_info = PublicationInfo()
+
+
+def publication_months(journal_name: str) -> list:
+    return pub_info.pub_months(journal_name)
