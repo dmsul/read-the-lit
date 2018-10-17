@@ -12,18 +12,27 @@ def main() -> ReadingList:
 
     if args.open:
         prompt = "Open issue: "
-        ans = prompt_ans(rl, prompt)
+        ans = check_for_single(rl, prompt)
         issue = rl.get(rl.selection.loc[ans, 'index'])
         open_issue(issue)
 
     if args.mark_read:
         prompt = "Mark issue as read: "
-        ans = prompt_ans(rl, prompt)
+        ans = check_for_single(rl, prompt)
         to_be_marked = rl.selection.loc[ans, 'index']
         rl.mark_read(to_be_marked)
         print(f"{to_be_marked} marked as read")
 
     return rl
+
+
+def check_for_single(rl: ReadingList, prompt: str) -> int:
+    if len(rl.selection) == 1:
+        ans = 1
+    else:
+        ans = prompt_ans(rl, prompt)
+
+    return ans
 
 
 def prompt_ans(rl: ReadingList, prompt: str) -> int:
