@@ -60,7 +60,7 @@ def open_issue(issue: Issue) -> None:
 
 def cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', type=int, default=5,
+    parser.add_argument('-n', type=int, nargs='?', const=1, default=5,
                         help='Number of issues to show.')
     parser.add_argument('--all', '-a', action='store_true',
                         help='Show all issues.')
